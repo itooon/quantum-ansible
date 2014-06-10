@@ -4,6 +4,17 @@
   sudo: True
   tasks:
 
+  - name: install python-pip package
+    apt: pkg=python-pip
+
+  - name: get python six library version
+    shell: /usr/bin/pip freeze --local 2> /dev/null | grep six | cut -f3 -d=
+    register: six_version
+
+  - name: install or upgrade python six library
+    pip: name=six version=1.4.1
+    when: six_version.stdout | version_compare('1.4.1', '<')
+
   - name: install the neutron server package
     apt: pkg=neutron-server
 
